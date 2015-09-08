@@ -1,31 +1,69 @@
 <%= render "layouts/navbar", page: "Resources" %>
 
-<p class="ui-shescoding-crud" id="notice"><%= notice %></p>
-<br>
-<br>
-<br>
-<p>
-  <strong>Title:</strong>
-  <%= @resource.title %>
-</p>
-<p>
-  <strong>Description:</strong>
-  <%= @resource.description %>
-</p>
-<p>
-  <strong>URL:</strong>
-  <%= @resource.url %>
-</p>
-<p>
-  <strong>Source:</strong>
-  <%= @resource.source %>
-</p>
-<p>
-  <strong>Tags:</strong>
-  <%= @resource.tag_list %>
-</p>
+<div class="resources-section container">
+    <div class="resources-grid col-md-9">
+        <div class="panel panel-default <%= create_filter_targets(@resource) %>">
+          <div class="panel-body">
+            <div class="panel-header">
+              <h4><%= @resource.source %></h4>
+              <h3><%= link_to @resource.title, @resource.url, target: "_blank" %></h3>
+            </div>
+            <div class="panel-preview">
+              <div class="text">"<%= @resource.description %></div>
+              <%= link_to "Read More >>", @resource.url, class: "next", target: "_blank" %>
+            </div>
+            <div class="panel-tags">
+              <ul>
+                <% @resource.tag_list.each do |tag| %>
+                  <li><%= link_to tag, tag_path(tag) %></li>
+                <% end %>
+              </ul>
+            </div>
+            <div class="panel-data">
+              <div class="date"><%= format_date(@resource.date) %></div>
+              <div class="likes">
+                <%= button_to like_path(@resource.id), method: :post, class: "heart #{empty_or_full_heart(@resource)}" do %>
+                  <span><%= @resource.likes %></span>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+	</div>
+<script>
+  $(document).ready(function() {
+    // Get Current URL
+    var currentUrl = window.location.href;
 
-<%= link_to 'Edit', edit_resource_path(@resource) %> |
-<%= link_to 'Back', resources_path %>
+    // Initialize Layout
+    var isotopeSettings = {
+      itemSelector: '.panel',
+      layoutMode: 'masonry',
+      masonry: {
+        columnWidth: '.panel'
+      }
+    }
+    var $container = $('.resources-grid').isotope(isotopeSettings);
+
+    // Initialize Selected Category
+    initializeSelectedCategory(currentUrl, $container);
+
+    // Filter Selected Category
+    $('.resources-sidebar li').click(function(e) {
+      filterSelectedCategory(e, currentUrl, this, $container);
+    });
+
+    // Return To Top
+    $('#return-to-top').click(function(e) {
+      scrollToTop(e);
+    })
+
+    // Ajax Like
+    $(".heart").click(function(e){
+      incrementLike(e, this);
+    });
+  });
+</script>
 
 <%= render :partial => "layouts/footer" %>
+

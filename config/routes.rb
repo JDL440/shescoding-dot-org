@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   resources :resources,       only: [:index]
   get 'resources/tags/:tag',  to: 'resources#index',  as: :tag
   post 'resources/:id/like',  to: 'resources#like',   as: :like
+  get 'resources/:id'		  => 'resources#show'
   
   # Static pages
   get 'about',            to: "static_pages#about"

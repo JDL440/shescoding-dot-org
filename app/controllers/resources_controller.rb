@@ -16,6 +16,8 @@ class ResourcesController < ApplicationController
   # GET /resources/1
   # GET /resources/1.json
   def show
+	@showresources = Resource.all
+	@resource = @showresources.find(params[:id])
   end
 
   # GET /resources/new
